@@ -25,9 +25,9 @@ class Dialog :
 
 		
 class Handler:
+	#~ btn_filechooser_file_set_cb
 	
-	
-	def btn_filechooser_file_set_cb(self, widget) :
+	def btn_file_file_set_cb(self, widget) :
 		textview = builder.get_object("textview")
 		
 		texto_buffer = builder.get_object("textbuffer1")
@@ -39,21 +39,6 @@ class Handler:
 			
 		texto_buffer.set_text(string_txt)
 		
-		
-		
-	#~ def btn_save_clicked_cb(self, button) :
-		#~ dialog_save = Dialog()
-		#~ state, myfile =dialog_save.run()
-		#~ if state :
-			#~ view = builder.get_object("textview")
-			#~ buffer1 = view.get_buffer()
-			#~ text = buffer1.get_text(buffer1.get_start_iter(), buffer1.get_end_iter(), True)
-			#~ print (text)
-			#~ try:
-				#~ open(myfile, 'w').write(text)
-			#~ except Exception as e :
-				#~ print (str(e))
-	
 	
 	
 	def onDeleteWindow(self, *args):
