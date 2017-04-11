@@ -1,6 +1,22 @@
 import gi
+
+import Orange
+import random
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+
+#~ Orange _____
+data = Orange.data.Table("iris")
+nb = Orange.classification.NaiveBayesLearner()
+res = Orange.evaluation.CrossValidation(data, [nb], k=5)
+accurancy = Orange.evaluation.scoring.CA(res)
+auc = Orange.evaluation.scoring.AUC(res)
+print (accurancy[0])
+print (auc[0])
+#~ print("Accuracy: %.3f" % Orange.evaluation.scoring.CA(res)[0])
+#~ print("AUC:      %.3f" % Orange.evaluation.scoring.AUC(res)[0])
+#~ __________________
 
 class Dialog :
 		#~ Constructor de los dialogos
@@ -9,8 +25,7 @@ class Dialog :
 		self.build.add_from_file("bay.glade")
 		self.dialog = self.build.get_object("dialog_save")
 		
-
-	
+		
 	def run(self):
 		response = self.dialog.run()
 		#~ Verificamos si se dio "cancelar" o "OK"
@@ -25,19 +40,19 @@ class Dialog :
 
 		
 class Handler:
-	#~ btn_filechooser_file_set_cb
 	
 	def btn_file_file_set_cb(self, widget) :
-		textview = builder.get_object("textview")
-		
-		texto_buffer = builder.get_object("textbuffer1")
+		#~ textview = builder.get_object("textview")
+		#~ texto_buffer = builder.get_object("textbuffer1")
 		
 		file_txt = widget.get_filename()
 		string_txt = ""
 		for line in open(file_txt) :
 			string_txt = string_txt + line
 			
-		texto_buffer.set_text(string_txt)
+			
+		#~ Mostrar texto de archivo en ventana	-----------------------
+		#~ texto_buffer.set_text(string_txt)
 		
 	
 	
