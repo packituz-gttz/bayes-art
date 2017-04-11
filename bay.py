@@ -68,6 +68,8 @@ class Handler:
 	def file_bayes_activate_cb(self, widget) :
 		textViewAUC = builder.get_object("textViewAUC")
 		textViewAccurrancy = builder.get_object("textViewAccurracy")
+		textViewPrecision = builder.get_object("label_precision")
+		textViewRecall = builder.get_object("label_recall")
 		
 		try:
 			#~ Orange _____
@@ -76,11 +78,16 @@ class Handler:
 			res = Orange.evaluation.CrossValidation(data, [nb], k=self.k_value)
 			accurracy = Orange.evaluation.scoring.CA(res)
 			auc = Orange.evaluation.scoring.AUC(res)
+			precision = Orange.evaluation.scoring.Precision(res)
+			recall = Orange.evaluation.scoring.Recall(res)
 		
 			print (accurracy[0])
 			print (auc[0])
+			print (recall[0])
 			textViewAUC.set_text(str(auc))
 			textViewAccurrancy.set_text(str(accurracy))
+			textViewPrecision.set_text(str(precision))
+			textViewRecall.set_text(str(recall))
 		
 		except AttributeError:
 			print ("Elige primero un archivo")	
