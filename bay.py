@@ -33,6 +33,27 @@ class Dialog :
 		
 class Handler:
 	
+	def __init__(self) :
+		list_model_K = builder.get_object("liststore1")
+		list_model_K.append([2])
+		list_model_K.append([5])
+		list_model_K.append([7])
+		list_model_K.append([10])
+		list_model_K.append([15])
+		list_model_K.append([20])
+		combo_USB_List = builder.get_object("combo_kFolds")
+		combo_USB_List.set_active(1)
+		
+		self.k_value = 5
+		
+	def combo_kFolds_changed_cb(self, combo) :
+		tree_iter = combo.get_active_iter()
+		if tree_iter != None :
+			model = combo.get_model()
+			self.k_value = model[tree_iter][0]
+			print (self.k_value)
+
+	
 	def btn_file_file_set_cb(self, widget) :
 		#~ textview = builder.get_object("textview")
 		#~ texto_buffer = builder.get_object("textbuffer1")
@@ -49,22 +70,22 @@ class Handler:
 		textViewAUC = builder.get_object("textViewAUC")
 		textViewAccurrancy = builder.get_object("textViewAccurracy")
 		
-	try:
-		#~ Orange _____
-		data = Orange.data.Table(self.file_txt)
-		nb = Orange.classification.NaiveBayesLearner()
-		res = Orange.evaluation.CrossValidation(data, [nb], k=5)
-		accurracy = Orange.evaluation.scoring.CA(res)
-		auc = Orange.evaluation.scoring.AUC(res)
+		try:
+			#~ Orange _____
+			data = Orange.data.Table(self.file_txt)
+			nb = Orange.classification.NaiveBayesLearner()
+			res = Orange.evaluation.CrossValidation(data, [nb], k=self.k_value)
+			accurracy = Orange.evaluation.scoring.CA(res)
+			auc = Orange.evaluation.scoring.AUC(res)
+			
+			
+			print (accurracy[0])
+			print (auc[0])
+			textViewAUC.set_text(str(auc))
+			textViewAccurrancy.set_text(str(accurracy))
 		
-		
-		print (accurracy[0])
-		print (auc[0])
-		textViewAUC.set_text(str(auc))
-		textViewAccurrancy.set_text(str(accurracy))
-		
-	except AttributeError:
-		print ("Elige primero un archivo")	
+		except AttributeError:
+			print ("Elige primero un archivo")	
 		
 		
 		
