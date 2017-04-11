@@ -16,18 +16,17 @@ class Dialog :
 	def __init__(self) :
 		self.build = Gtk.Builder()
 		self.build.add_from_file("bay.glade")
-		self.dialog = self.build.get_object("dialog_save")
+		self.dialog = self.build.get_object("dialog_chosee_file_warning")
 		
 		
 	def run(self):
 		response = self.dialog.run()
 		#~ Verificamos si se dio "cancelar" o "OK"
-		if response == -5 :
-			myfile = self.dialog.get_filename()
-			self.dialog.destroy()
-			return True, myfile
 		self.dialog.destroy()
-		return False
+		if response == -5 :
+			return "ok"
+		else :
+			return "cancel"
 		
 
 		
@@ -77,8 +76,7 @@ class Handler:
 			res = Orange.evaluation.CrossValidation(data, [nb], k=self.k_value)
 			accurracy = Orange.evaluation.scoring.CA(res)
 			auc = Orange.evaluation.scoring.AUC(res)
-			
-			
+		
 			print (accurracy[0])
 			print (auc[0])
 			textViewAUC.set_text(str(auc))
@@ -86,12 +84,12 @@ class Handler:
 		
 		except AttributeError:
 			print ("Elige primero un archivo")	
-		
+			my_dialog = Dialog()
+			response = my_dialog.run()
 		
 		
 	
-	
-	
+
 	def onDeleteWindow(self, *args):
 		Gtk.main_quit(*args)
 
