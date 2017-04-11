@@ -6,14 +6,7 @@ import random
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
-#~ Orange _____
-data = Orange.data.Table("iris")
-nb = Orange.classification.NaiveBayesLearner()
-res = Orange.evaluation.CrossValidation(data, [nb], k=5)
-accurancy = Orange.evaluation.scoring.CA(res)
-auc = Orange.evaluation.scoring.AUC(res)
-print (accurancy[0])
-print (auc[0])
+
 #~ print("Accuracy: %.3f" % Orange.evaluation.scoring.CA(res)[0])
 #~ print("AUC:      %.3f" % Orange.evaluation.scoring.AUC(res)[0])
 #~ __________________
@@ -36,7 +29,6 @@ class Dialog :
 		self.dialog.destroy()
 		return False
 		
-		
 
 		
 class Handler:
@@ -45,16 +37,34 @@ class Handler:
 		#~ textview = builder.get_object("textview")
 		#~ texto_buffer = builder.get_object("textbuffer1")
 		
-		file_txt = widget.get_filename()
+		self.file_txt = widget.get_filename()
 		string_txt = ""
-		for line in open(file_txt) :
+		for line in open(self.file_txt) :
 			string_txt = string_txt + line
-			
 			
 		#~ Mostrar texto de archivo en ventana	-----------------------
 		#~ texto_buffer.set_text(string_txt)
 		
-	
+	def file_bayes_activate_cb(self, widget) :
+		textViewAUC = builder.get_object("textViewAUC")
+		textViewAccurrancy = builder.get_object("textViewAccurracy")
+		
+		#~ Orange _____
+		#~ data = Orange.data.Table("iris")
+		
+		data = Orange.data.Table(self.file_txt)
+		nb = Orange.classification.NaiveBayesLearner()
+		res = Orange.evaluation.CrossValidation(data, [nb], k=5)
+		accurracy = Orange.evaluation.scoring.CA(res)
+		auc = Orange.evaluation.scoring.AUC(res)
+		print (":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+		print(data)
+		
+		print (accurracy[0])
+		print (auc[0])
+		textViewAUC.set_text(str(auc))
+		textViewAccurrancy.set_text(str(accurracy))
+		
 	
 	def onDeleteWindow(self, *args):
 		Gtk.main_quit(*args)

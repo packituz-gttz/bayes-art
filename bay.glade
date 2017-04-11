@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkFileFilter" id="filefilter1">
     <patterns>
-      <pattern>*.arff</pattern>
+      <pattern>*.tab</pattern>
     </patterns>
   </object>
   <object class="GtkListStore" id="liststore1">
@@ -30,6 +30,7 @@
               <object class="GtkFileChooserButton" id="btnfilechooser">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="filter">filefilter1</property>
                 <property name="title" translatable="yes"/>
                 <signal name="file-set" handler="btn_file_file_set_cb" swapped="no"/>
               </object>
@@ -59,6 +60,7 @@
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">bayes</property>
                             <property name="use_underline">True</property>
+                            <signal name="activate" handler="file_bayes_activate_cb" swapped="no"/>
                           </object>
                         </child>
                         <child>
@@ -262,7 +264,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="textViewAUC">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                               </object>
@@ -285,7 +287,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="textViewAccurracy">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                               </object>
