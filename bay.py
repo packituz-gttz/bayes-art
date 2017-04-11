@@ -16,18 +16,17 @@ class Dialog :
 	def __init__(self) :
 		self.build = Gtk.Builder()
 		self.build.add_from_file("bay.glade")
-		self.dialog = self.build.get_object("dialog_save")
+		self.dialog = self.build.get_object("dialog_chosee_file_warning")
 		
 		
 	def run(self):
 		response = self.dialog.run()
 		#~ Verificamos si se dio "cancelar" o "OK"
-		if response == -5 :
-			myfile = self.dialog.get_filename()
-			self.dialog.destroy()
-			return True, myfile
 		self.dialog.destroy()
-		return False
+		if response == -5 :
+			return "ok"
+		else :
+			return "cancel"
 		
 
 		
@@ -49,28 +48,28 @@ class Handler:
 		textViewAUC = builder.get_object("textViewAUC")
 		textViewAccurrancy = builder.get_object("textViewAccurracy")
 		
-	try:
-		#~ Orange _____
-		data = Orange.data.Table(self.file_txt)
-		nb = Orange.classification.NaiveBayesLearner()
-		res = Orange.evaluation.CrossValidation(data, [nb], k=5)
-		accurracy = Orange.evaluation.scoring.CA(res)
-		auc = Orange.evaluation.scoring.AUC(res)
+		try:
+			#~ Orange _____
+			data = Orange.data.Table(self.file_txt)
+			nb = Orange.classification.NaiveBayesLearner()
+			res = Orange.evaluation.CrossValidation(data, [nb], k=5)
+			accurracy = Orange.evaluation.scoring.CA(res)
+			auc = Orange.evaluation.scoring.AUC(res)
 		
 		
-		print (accurracy[0])
-		print (auc[0])
-		textViewAUC.set_text(str(auc))
-		textViewAccurrancy.set_text(str(accurracy))
+			print (accurracy[0])
+			print (auc[0])
+			textViewAUC.set_text(str(auc))
+			textViewAccurrancy.set_text(str(accurracy))
 		
-	except AttributeError:
-		print ("Elige primero un archivo")	
-		
+		except AttributeError:
+			print ("Elige primero un archivo")	
+			my_dialog = Dialog()
+			response = my_dialog.run()
 		
 		
 	
-	
-	
+
 	def onDeleteWindow(self, *args):
 		Gtk.main_quit(*args)
 
