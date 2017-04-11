@@ -49,22 +49,27 @@ class Handler:
 		textViewAUC = builder.get_object("textViewAUC")
 		textViewAccurrancy = builder.get_object("textViewAccurracy")
 		
+	try:
 		#~ Orange _____
-		#~ data = Orange.data.Table("iris")
-		
 		data = Orange.data.Table(self.file_txt)
 		nb = Orange.classification.NaiveBayesLearner()
 		res = Orange.evaluation.CrossValidation(data, [nb], k=5)
 		accurracy = Orange.evaluation.scoring.CA(res)
 		auc = Orange.evaluation.scoring.AUC(res)
-		print (":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
-		print(data)
+		
 		
 		print (accurracy[0])
 		print (auc[0])
 		textViewAUC.set_text(str(auc))
 		textViewAccurrancy.set_text(str(accurracy))
 		
+	except AttributeError:
+		print ("Elige primero un archivo")	
+		
+		
+		
+	
+	
 	
 	def onDeleteWindow(self, *args):
 		Gtk.main_quit(*args)
