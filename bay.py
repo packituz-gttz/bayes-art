@@ -3,6 +3,9 @@ import gi
 import Orange
 import random
 from sklearn.metrics import confusion_matrix
+import seaborn as sn
+import pandas as pd
+import matplotlib.pyplot as plt
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -11,6 +14,22 @@ from gi.repository import Gtk
 #~ print("Accuracy: %.3f" % Orange.evaluation.scoring.CA(res)[0])
 #~ print("AUC:      %.3f" % Orange.evaluation.scoring.AUC(res)[0])
 #~ __________________
+#~ En desarrollo-------------
+class ChartWindow :
+	def __init__(self) :
+		self.build = Gtk.Builder()
+		self.build.add_from_file("bay.glade")
+		self.window_child = self.build.get_object("chart_window")
+		self.window_child.connect("delete_event", self.destroy_my_window)
+		self.sw = self.build.get_object("scrolled_child_chart")
+		self.sw2 = self.build.get_object("scrolled_child_toolbar")
+		
+		
+	def show_Cwindow(self) :
+		plt.rc("figure", facecolor="white")
+			
+		
+	
 
 class Dialog :
 		#~ Constructor de los dialogos
@@ -105,6 +124,20 @@ class Handler:
 		
 		results = confusion_matrix(expected, predicted)
 		print (results)
+		
+		filas = len(results)
+		columnas = len(results[0])
+		
+		df_cm = pd.DataFrame(results, index = [ c_values [i] for i in range(0, len(results))],
+									columns = [ c_values [i] for i in range(0, len(results))])
+		sn.heatmap(df_cm, annot = True, fmt="d")
+		plt.ylabel('Actual')
+		plt.xlabel('Predicted')
+		plt.show() 
+		
+		#~ chart_window = ChartWindow() En desarrollo---
+		#~ chart_window.show_Cwindow() En desarrollo---
+		
 		
 	
 
