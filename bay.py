@@ -2,6 +2,7 @@ import gi
 
 import Orange
 import random
+from sklearn.metrics import confusion_matrix
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -73,13 +74,13 @@ class Handler:
 		
 		try:
 			#~ Orange _____
-			data = Orange.data.Table(self.file_txt)
+			self.data = Orange.data.Table(self.file_txt)
 			nb = Orange.classification.NaiveBayesLearner()
-			res = Orange.evaluation.CrossValidation(data, [nb], k=self.k_value)
-			accurracy = Orange.evaluation.scoring.CA(res)
-			auc = Orange.evaluation.scoring.AUC(res)
-			precision = Orange.evaluation.scoring.Precision(res)
-			recall = Orange.evaluation.scoring.Recall(res)
+			self.res = Orange.evaluation.CrossValidation(self.data, [nb], k=self.k_value)
+			accurracy = Orange.evaluation.scoring.CA(self.res)
+			auc = Orange.evaluation.scoring.AUC(self.res)
+			precision = Orange.evaluation.scoring.Precision(self.res)
+			recall = Orange.evaluation.scoring.Recall(self.res)
 		
 			print (accurracy[0])
 			print (auc[0])
@@ -94,6 +95,16 @@ class Handler:
 			my_dialog = Dialog()
 			response = my_dialog.run()
 		
+	
+	
+	def file_matriz_activate_cb(self, widget) :	
+		c_values = self.data.domain.class_var.values
+		
+		expected = self.res.actual
+		predicted = self.res.predicted[0]
+		
+		results = confusion_matrix(expected, predicted)
+		print (results)
 		
 	
 
