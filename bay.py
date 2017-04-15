@@ -141,8 +141,18 @@ class Handler:
 		#~ chart_window.show_Cwindow() En desarrollo---
 	
 	def file_scatterplot_activate_cb(self, widget) :
+		self.c_values = self.data.domain.class_var.values
+		self.expected = self.res.actual
+		self.predicted = self.res.predicted[0]
 		print (self.expected)
 		print (self.predicted)
+
+		results = confusion_matrix(self.expected, self.predicted)
+
+
+		self.filas = len(results)
+		columnas = len(results[0])
+		
 		
 		N = 9
 		x = [ elem + random.uniform(0,0.5) for elem in self.expected ]
@@ -157,7 +167,7 @@ class Handler:
 			value_c = float((value - min_v ) / ( max_v - min_v ))
 			colors.append((value_c,0,value_c))
 		#~ colors = np.random.rand(N)
-
+		fig, self.ax = plt.subplots()
 		plt.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
 		plt.xlabel('Predicted')
 		plt.ylabel('Actual')
