@@ -6,6 +6,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -118,7 +119,7 @@ class Handler:
 	
 	def file_matriz_activate_cb(self, widget) :	
 		c_values = self.data.domain.class_var.values
-		
+		print (c_values)
 		expected = self.res.actual
 		predicted = self.res.predicted[0]
 		
@@ -133,6 +134,33 @@ class Handler:
 		sn.heatmap(df_cm, annot = True, fmt="d")
 		plt.ylabel('Actual')
 		plt.xlabel('Predicted')
+		plt.show() 
+		
+		print (expected)
+		print (predicted)
+		
+		N = 9
+		x = [ elem + random.uniform(0,0.5) for elem in expected ]
+		y = [ elem + random.uniform(0,0.5) for elem in predicted ]
+		
+		print (type(x))
+		print (type(y))
+		max_v = (max(predicted))
+		min_v = (min(predicted))
+		colors = []
+		for value in predicted :
+			value_c = float((value - min_v ) / ( max_v - min_v ))
+			colors.append((value_c,0,value_c))
+		#~ colors = np.random.rand(N)
+
+		plt.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
+		plt.xlabel('Predicted')
+		plt.ylabel('Actual')
+		index = []
+		for number in range(0,filas) :
+			index.append(number + 0.25)
+		plt.xticks(index, (i for i in c_values))
+		plt.yticks(index, (i for i in c_values))
 		plt.show() 
 		
 		#~ chart_window = ChartWindow() En desarrollo---
