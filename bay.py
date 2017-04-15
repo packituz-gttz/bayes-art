@@ -6,6 +6,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -117,27 +118,54 @@ class Handler:
 	
 	
 	def file_matriz_activate_cb(self, widget) :	
-		c_values = self.data.domain.class_var.values
+		self.c_values = self.data.domain.class_var.values
+		print (self.c_values)
+		self.expected = self.res.actual
+		self.predicted = self.res.predicted[0]
 		
-		expected = self.res.actual
-		predicted = self.res.predicted[0]
-		
-		results = confusion_matrix(expected, predicted)
+		results = confusion_matrix(self.expected, self.predicted)
 		print (results)
 		
-		filas = len(results)
+		self.filas = len(results)
 		columnas = len(results[0])
 		
-		df_cm = pd.DataFrame(results, index = [ c_values [i] for i in range(0, len(results))],
-									columns = [ c_values [i] for i in range(0, len(results))])
+		df_cm = pd.DataFrame(results, index = [ self.c_values [i] for i in range(0, len(results))],
+									columns = [ self.c_values [i] for i in range(0, len(results))])
 		sn.heatmap(df_cm, annot = True, fmt="d")
 		plt.ylabel('Actual')
 		plt.xlabel('Predicted')
 		plt.show() 
 		
-		#~ chart_window = ChartWindow() En desarrollo---
+		#~ chart_window = ChartWindow() En desarrollo----------------------
 		#~ chart_window.show_Cwindow() En desarrollo---
+	
+	def file_scatterplot_activate_cb(self, widget) :
+		print (self.expected)
+		print (self.predicted)
 		
+		N = 9
+		x = [ elem + random.uniform(0,0.5) for elem in self.expected ]
+		y = [ elem + random.uniform(0,0.5) for elem in self.predicted ]
+		
+		print (type(x))
+		print (type(y))
+		max_v = (max(self.predicted))
+		min_v = (min(self.predicted))
+		colors = []
+		for value in self.predicted :
+			value_c = float((value - min_v ) / ( max_v - min_v ))
+			colors.append((value_c,0,value_c))
+		#~ colors = np.random.rand(N)
+
+		plt.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
+		plt.xlabel('Predicted')
+		plt.ylabel('Actual')
+		index = []
+		for number in range(0,self.filas) :
+			index.append(number + 0.25)
+		plt.xticks(index, (i for i in self.c_values))
+		plt.yticks(index, (i for i in self.c_values))
+		plt.show() 
 		
 	
 
