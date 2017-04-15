@@ -11,6 +11,9 @@ import numpy as np
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
+from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3 as NavigationToolbar
+
 
 
 #~ print("Accuracy: %.3f" % Orange.evaluation.scoring.CA(res)[0])
@@ -18,20 +21,27 @@ from gi.repository import Gtk
 #~ __________________
 #~ En desarrollo-------------
 class ChartWindow :
-	def __init__(self) :
+	
+	def __init__(self, canvas,title) :
 		self.build = Gtk.Builder()
 		self.build.add_from_file("bay.glade")
 		self.window_child = self.build.get_object("chart_window")
 		self.window_child.connect("delete_event", self.destroy_my_window)
 		self.sw = self.build.get_object("scrolled_child_chart")
 		self.sw2 = self.build.get_object("scrolled_child_toolbar")
-		
+		self.sw.add(canvas)
+		self.window_child.set_title(title)
+		toolbar = NavigationToolbar(canvas, self.window_child)
+		self.sw2.add(toolbar)
+
+
 		
 	def show_Cwindow(self) :
-		plt.rc("figure", facecolor="white")
-			
-		
-	
+		self.window_child.show_all()
+
+	def destroy_my_window(self, event, data) :
+		self.window_child.destroy()
+		return True
 
 class Dialog :
 		#~ Constructor de los dialogos
@@ -55,6 +65,8 @@ class Dialog :
 class Handler:
 	
 	def __init__(self) :
+		plt.rc("figure", facecolor="white")
+
 		list_model_K = builder.get_object("liststore1")
 		list_model_K.append([2])
 		list_model_K.append([5])
@@ -141,6 +153,7 @@ class Handler:
 		#~ chart_window.show_Cwindow() En desarrollo---
 	
 	def file_scatterplot_activate_cb(self, widget) :
+		
 		self.c_values = self.data.domain.class_var.values
 		self.expected = self.res.actual
 		self.predicted = self.res.predicted[0]
@@ -167,17 +180,22 @@ class Handler:
 			value_c = float((value - min_v ) / ( max_v - min_v ))
 			colors.append((value_c,0,value_c))
 		#~ colors = np.random.rand(N)
-		fig, self.ax = plt.subplots()
-		plt.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
-		plt.xlabel('Predicted')
-		plt.ylabel('Actual')
+		fig, ax = plt.subplots()
+		ax.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
+		ax.set_xlabel('Predicted')
+		ax.set_ylabel('Actual')
 		index = []
 		for number in range(0,self.filas) :
 			index.append(number + 0.25)
-		plt.xticks(index, (i for i in self.c_values))
-		plt.yticks(index, (i for i in self.c_values))
-		plt.show() 
+		ax.set_xticks(index)
+		ax.set_yticks(index)
+		ax.set_xticklabels((i for i in self.c_values))
+		ax.set_yticklabels((i for i in self.c_values))
+		#~ ax.show() 
 		
+		canvas = FigureCanvas(fig)
+		chart_window = ChartWindow(canvas,"Scatter Plot")
+		chart_window.show_Cwindow()
 	
 
 	def onDeleteWindow(self, *args):
