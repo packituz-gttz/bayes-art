@@ -124,7 +124,7 @@ class Handler:
 			textViewRecall.set_text(str(recall))
 		
 		except AttributeError:
-			print ("Elige primero un archivo")	
+			print ("Choose a File First")	
 			my_dialog = Dialog()
 			response = my_dialog.run()
 		
@@ -138,16 +138,22 @@ class Handler:
 		
 		results = confusion_matrix(self.expected, self.predicted)
 		print (results)
-		
+		fig, ax = plt.subplots()
+				
 		self.filas = len(results)
 		columnas = len(results[0])
 		
 		df_cm = pd.DataFrame(results, index = [ self.c_values [i] for i in range(0, len(results))],
 									columns = [ self.c_values [i] for i in range(0, len(results))])
 		sn.heatmap(df_cm, annot = True, fmt="d")
-		plt.ylabel('Actual')
-		plt.xlabel('Predicted')
-		plt.show() 
+		#~ plt.ylabel('Actual')
+		#~ plt.xlabel('Predicted')
+		ax.set_xlabel('Actual')
+		ax.set_xlabel('Predicted')
+		#~ plt.show() 
+		canvas = FigureCanvas(fig)
+		chart_window = ChartWindow(canvas,"Confusion Matrix")
+		chart_window.show_Cwindow()
 		
 		#~ chart_window = ChartWindow() En desarrollo----------------------
 		#~ chart_window.show_Cwindow() En desarrollo---

@@ -15,6 +15,7 @@
   </object>
   <object class="GtkWindow" id="main_window">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Classificator Me</property>
     <property name="default_width">803</property>
     <property name="default_height">452</property>
     <signal name="delete-event" handler="onDeleteWindow" swapped="no"/>
@@ -391,8 +392,8 @@
   <object class="GtkWindow" id="chart_window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Chart</property>
-    <property name="default_width">677</property>
-    <property name="default_height">373</property>
+    <property name="default_width">698</property>
+    <property name="default_height">441</property>
     <property name="transient_for">main_window</property>
     <child>
       <object class="GtkBox">
@@ -523,7 +524,7 @@ Packituz</property>
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Selecciona un archivo (*.tab) primero </property>
+            <property name="label" translatable="yes">Please choose a file (*.tab) first</property>
           </object>
           <packing>
             <property name="expand">True</property>
