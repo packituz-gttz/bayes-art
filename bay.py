@@ -148,7 +148,7 @@ class Handler:
 		sn.heatmap(df_cm, annot = True, fmt="d")
 		#~ plt.ylabel('Actual')
 		#~ plt.xlabel('Predicted')
-		ax.set_xlabel('Actual')
+		ax.set_ylabel('Actual')
 		ax.set_xlabel('Predicted')
 		#~ plt.show() 
 		canvas = FigureCanvas(fig)
