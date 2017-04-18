@@ -9,11 +9,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 from matplotlib.backends.backend_gtk3 import NavigationToolbar2GTK3 as NavigationToolbar
-
+from sklearn.metrics import roc_curve, auc
 
 
 #~ print("Accuracy: %.3f" % Orange.evaluation.scoring.CA(res)[0])
@@ -113,15 +114,15 @@ class Handler:
 			accurracy = Orange.evaluation.scoring.CA(self.res)
 			auc = Orange.evaluation.scoring.AUC(self.res)
 			precision = Orange.evaluation.scoring.Precision(self.res)
-			recall = Orange.evaluation.scoring.Recall(self.res)
+			self.recall = Orange.evaluation.scoring.Recall(self.res)
 		
 			print (accurracy[0])
 			print (auc[0])
-			print (recall[0])
+			print (self.recall[0])
 			textViewAUC.set_text(str(auc))
 			textViewAccurrancy.set_text(str(accurracy))
 			textViewPrecision.set_text(str(precision))
-			textViewRecall.set_text(str(recall))
+			textViewRecall.set_text(str(self.recall))
 		
 		except AttributeError:
 			print ("Choose a File First")	
@@ -138,6 +139,19 @@ class Handler:
 		
 		results = confusion_matrix(self.expected, self.predicted)
 		print (results)
+		#_______________________________________
+		print ("matriz de confusion arriba")
+		print (results[0][0])
+		y_true = self.expected #falsos positivos [0][1] actual
+		y_probas = self.predicted #true positivos [1][1] prediction
+		
+		false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
+		
+		plt.title('Receiver Operating Characteristic')
+		plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
+		plt.show()
+		
+		#_______________________________________
 		fig, ax = plt.subplots()
 				
 		self.filas = len(results)
@@ -155,8 +169,6 @@ class Handler:
 		chart_window = ChartWindow(canvas,"Confusion Matrix")
 		chart_window.show_Cwindow()
 		
-		#~ chart_window = ChartWindow() En desarrollo----------------------
-		#~ chart_window.show_Cwindow() En desarrollo---
 	
 	def file_scatterplot_activate_cb(self, widget) :
 		
