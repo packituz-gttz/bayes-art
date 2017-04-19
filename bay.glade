@@ -135,6 +135,7 @@
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">about</property>
                             <property name="use_underline">True</property>
+                            <signal name="activate" handler="file_help_activate_cb" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -491,6 +492,7 @@ Packituz</property>
   </object>
   <object class="GtkDialog" id="dialog_chosee_file_warning">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Warning!</property>
     <property name="default_width">320</property>
     <property name="default_height">260</property>
     <property name="type_hint">dialog</property>
@@ -530,10 +532,9 @@ Packituz</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="dialog_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Please choose a file (*.tab) first</property>
           </object>
           <packing>
             <property name="expand">True</property>

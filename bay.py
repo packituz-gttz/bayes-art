@@ -46,10 +46,12 @@ class ChartWindow :
 
 class Dialog :
 		#~ Constructor de los dialogos
-	def __init__(self) :
+	def __init__(self, text="Please choose a file (*.tab) first") :
 		self.build = Gtk.Builder()
 		self.build.add_from_file("bay.glade")
 		self.dialog = self.build.get_object("dialog_chosee_file_warning")
+		label = self.build.get_object("dialog_label")
+		label.set_label(text)
 		
 		
 	def run(self):
@@ -61,7 +63,23 @@ class Dialog :
 		else :
 			return "cancel"
 		
-
+class Dialog_about :
+	
+	def __init__(self) :
+		self.build = Gtk.Builder()
+		self.build.add_from_file("bay.glade")
+		self.dialog = self.build.get_object("dialog_about")
+		#~ label = self.build.get_object("dialog_label")
+		#~ label.set_label(text)
+		
+	def run(self):
+		response = self.dialog.run()
+		#~ Verificamos si se dio "cancelar" o "OK"
+		self.dialog.destroy()
+		if response == -5 :
+			return "ok"
+		else :
+			return "cancel"
 		
 class Handler:
 	
@@ -132,112 +150,138 @@ class Handler:
 	
 	
 	def file_matriz_activate_cb(self, widget) :	
-		self.c_values = self.data.domain.class_var.values
-		print (self.c_values)
-		self.expected = self.res.actual
-		self.predicted = self.res.predicted[0]
 		
-		self.results = confusion_matrix(self.expected, self.predicted)
-		print (self.results)
-		#_______________________________________
-		#~ print ("matriz de confusion arriba")
-		#~ print (self.results[0][0])
-		#~ y_true = self.expected #falsos positivos [0][1] actual
-		#~ y_probas = self.predicted #true positivos [1][1] prediction
+		try :
+			
+			self.c_values = self.data.domain.class_var.values
+			print (self.c_values)
+			self.expected = self.res.actual
+			self.predicted = self.res.predicted[0]
+			
+			self.results = confusion_matrix(self.expected, self.predicted)
+			print (self.results)
+			#_______________________________________
+			#~ print ("matriz de confusion arriba")
+			#~ print (self.results[0][0])
+			#~ y_true = self.expected #falsos positivos [0][1] actual
+			#~ y_probas = self.predicted #true positivos [1][1] prediction
+			
+			#~ false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
+			
+			#~ plt.title('Receiver Operating Characteristic')
+			#~ plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
+			#~ plt.show()
+			#_______________________________________
+			fig, ax = plt.subplots()
+					
+			self.filas = len(self.results)
+			columnas = len(self.results[0])
+			
+			df_cm = pd.DataFrame(self.results, index = [ self.c_values [i] for i in range(0, len(self.results))],
+										columns = [ self.c_values [i] for i in range(0, len(self.results))])
+			sn.heatmap(df_cm, annot = True, fmt="d")
+			#~ plt.ylabel('Actual')
+			#~ plt.xlabel('Predicted')
+			ax.set_ylabel('Actual')
+			ax.set_xlabel('Predicted')
+			#~ plt.show() 
+			canvas = FigureCanvas(fig)
+			chart_window = ChartWindow(canvas,"Confusion Matrix")
+			chart_window.show_Cwindow()
 		
-		#~ false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
-		
-		#~ plt.title('Receiver Operating Characteristic')
-		#~ plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
-		#~ plt.show()
-		#_______________________________________
-		fig, ax = plt.subplots()
-				
-		self.filas = len(self.results)
-		columnas = len(self.results[0])
-		
-		df_cm = pd.DataFrame(self.results, index = [ self.c_values [i] for i in range(0, len(self.results))],
-									columns = [ self.c_values [i] for i in range(0, len(self.results))])
-		sn.heatmap(df_cm, annot = True, fmt="d")
-		#~ plt.ylabel('Actual')
-		#~ plt.xlabel('Predicted')
-		ax.set_ylabel('Actual')
-		ax.set_xlabel('Predicted')
-		#~ plt.show() 
-		canvas = FigureCanvas(fig)
-		chart_window = ChartWindow(canvas,"Confusion Matrix")
-		chart_window.show_Cwindow()
+		except AttributeError:
+			my_dialog = Dialog()
+			response = my_dialog.run()
 		
 	
 	def file_scatterplot_activate_cb(self, widget) :
 		
-		self.c_values = self.data.domain.class_var.values
-		self.expected = self.res.actual
-		self.predicted = self.res.predicted[0]
-		print (self.expected)
-		print (self.predicted)
-
-		results = confusion_matrix(self.expected, self.predicted)
-
-
-		self.filas = len(results)
-		columnas = len(results[0])
-		
-		
-		N = 9
-		x = [ elem + random.uniform(0,0.5) for elem in self.expected ]
-		y = [ elem + random.uniform(0,0.5) for elem in self.predicted ]
-		
-		print (type(x))
-		print (type(y))
-		max_v = (max(self.predicted))
-		min_v = (min(self.predicted))
-		colors = []
-		for value in self.predicted :
-			value_c = float((value - min_v ) / ( max_v - min_v ))
-			colors.append((value_c,0,value_c))
-		#~ colors = np.random.rand(N)
-		fig, ax = plt.subplots()
-		ax.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
-		ax.set_xlabel('Predicted')
-		ax.set_ylabel('Actual')
-		index = []
-		for number in range(0,self.filas) :
-			index.append(number + 0.25)
-		ax.set_xticks(index)
-		ax.set_yticks(index)
-		ax.set_xticklabels((i for i in self.c_values))
-		ax.set_yticklabels((i for i in self.c_values))
-		#~ ax.show() 
-		
-		canvas = FigureCanvas(fig)
-		chart_window = ChartWindow(canvas,"Scatter Plot")
-		chart_window.show_Cwindow()
+		try :
+			
+			self.c_values = self.data.domain.class_var.values
+			self.expected = self.res.actual
+			self.predicted = self.res.predicted[0]
+			print (self.expected)
+			print (self.predicted)
 	
+			results = confusion_matrix(self.expected, self.predicted)
+	
+	
+			self.filas = len(results)
+			columnas = len(results[0])
+			
+			
+			N = 9
+			x = [ elem + random.uniform(0,0.5) for elem in self.expected ]
+			y = [ elem + random.uniform(0,0.5) for elem in self.predicted ]
+			
+			print (type(x))
+			print (type(y))
+			max_v = (max(self.predicted))
+			min_v = (min(self.predicted))
+			colors = []
+			for value in self.predicted :
+				value_c = float((value - min_v ) / ( max_v - min_v ))
+				colors.append((value_c,0,value_c))
+			#~ colors = np.random.rand(N)
+			fig, ax = plt.subplots()
+			ax.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
+			ax.set_xlabel('Predicted')
+			ax.set_ylabel('Actual')
+			index = []
+			for number in range(0,self.filas) :
+				index.append(number + 0.25)
+			ax.set_xticks(index)
+			ax.set_yticks(index)
+			ax.set_xticklabels((i for i in self.c_values))
+			ax.set_yticklabels((i for i in self.c_values))
+			#~ ax.show() 
+			
+			canvas = FigureCanvas(fig)
+			chart_window = ChartWindow(canvas,"Scatter Plot")
+			chart_window.show_Cwindow()
+	
+		except AttributeError:
+			my_dialog = Dialog()
+			response = my_dialog.run()
+		
 
 	def file_curveroc_activate_cb(self, widget) :
-		self.expected = self.res.actual
-		self.predicted = self.res.predicted[0]
-		self.results = confusion_matrix(self.expected, self.predicted)
-		print (self.results)
 		
-		print ("matriz de confusion arriba")
-		print (self.results[0][0])
-		y_true = self.expected #falsos positivos [0][1] actual
-		y_probas = self.predicted #true positivos [1][1] prediction
-		
-		false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
-		
-		plt.title('Receiver Operating Characteristic')
-		plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
-		plt.show()
-		#~ fig, ax = plt.subplots()
-		#~ ax.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
-		#~ canvas = FigureCanvas(fig)
-		#~ chart_window = ChartWindow(canvas,"Curve ROC")
-		#~ chart_window.show_Cwindow()
+		try :
+			self.expected = self.res.actual
+			self.predicted = self.res.predicted[0]
+			self.results = confusion_matrix(self.expected, self.predicted)
+			print (self.results)
+			
+			print ("matriz de confusion arriba")
+			print (self.results[0][0])
+			y_true = self.expected #falsos positivos [0][1] actual
+			y_probas = self.predicted #true positivos [1][1] prediction
+			
+			false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
+			
+			fig, ax = plt.subplots()
+			
+			#~ plt.title('Receiver Operating Characteristic')
+			ax.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
+			ax.set_xlabel("FPR")
+			ax.set_ylabel("TPR")
+			#~ plt.show()
+			#~ fig, ax = plt.subplots()
+			#~ ax.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
+			canvas = FigureCanvas(fig)
+			chart_window = ChartWindow(canvas,"Curve ROC")
+			chart_window.show_Cwindow()
+			
+		except AttributeError:
+			my_dialog = Dialog("Select a classifier first")
+			response = my_dialog.run()
 		
 
+	def file_help_activate_cb(self, widget) :
+		dialog_about = Dialog_about()
+		response = dialog_about.run()
 
 	def onDeleteWindow(self, *args):
 		Gtk.main_quit(*args)
