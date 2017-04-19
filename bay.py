@@ -137,28 +137,27 @@ class Handler:
 		self.expected = self.res.actual
 		self.predicted = self.res.predicted[0]
 		
-		results = confusion_matrix(self.expected, self.predicted)
-		print (results)
+		self.results = confusion_matrix(self.expected, self.predicted)
+		print (self.results)
 		#_______________________________________
-		print ("matriz de confusion arriba")
-		print (results[0][0])
-		y_true = self.expected #falsos positivos [0][1] actual
-		y_probas = self.predicted #true positivos [1][1] prediction
+		#~ print ("matriz de confusion arriba")
+		#~ print (self.results[0][0])
+		#~ y_true = self.expected #falsos positivos [0][1] actual
+		#~ y_probas = self.predicted #true positivos [1][1] prediction
 		
-		false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
+		#~ false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
 		
-		plt.title('Receiver Operating Characteristic')
-		plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
-		plt.show()
-		
+		#~ plt.title('Receiver Operating Characteristic')
+		#~ plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
+		#~ plt.show()
 		#_______________________________________
 		fig, ax = plt.subplots()
 				
-		self.filas = len(results)
-		columnas = len(results[0])
+		self.filas = len(self.results)
+		columnas = len(self.results[0])
 		
-		df_cm = pd.DataFrame(results, index = [ self.c_values [i] for i in range(0, len(results))],
-									columns = [ self.c_values [i] for i in range(0, len(results))])
+		df_cm = pd.DataFrame(self.results, index = [ self.c_values [i] for i in range(0, len(self.results))],
+									columns = [ self.c_values [i] for i in range(0, len(self.results))])
 		sn.heatmap(df_cm, annot = True, fmt="d")
 		#~ plt.ylabel('Actual')
 		#~ plt.xlabel('Predicted')
@@ -215,6 +214,30 @@ class Handler:
 		chart_window = ChartWindow(canvas,"Scatter Plot")
 		chart_window.show_Cwindow()
 	
+
+	def file_curveroc_activate_cb(self, widget) :
+		self.expected = self.res.actual
+		self.predicted = self.res.predicted[0]
+		self.results = confusion_matrix(self.expected, self.predicted)
+		print (self.results)
+		
+		print ("matriz de confusion arriba")
+		print (self.results[0][0])
+		y_true = self.expected #falsos positivos [0][1] actual
+		y_probas = self.predicted #true positivos [1][1] prediction
+		
+		false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
+		
+		plt.title('Receiver Operating Characteristic')
+		plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
+		plt.show()
+		#~ fig, ax = plt.subplots()
+		#~ ax.scatter(y, x, s = 130.5, c=colors, alpha=0.5)
+		#~ canvas = FigureCanvas(fig)
+		#~ chart_window = ChartWindow(canvas,"Curve ROC")
+		#~ chart_window.show_Cwindow()
+		
+
 
 	def onDeleteWindow(self, *args):
 		Gtk.main_quit(*args)
