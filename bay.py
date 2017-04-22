@@ -160,18 +160,7 @@ class Handler:
 			
 			self.results = confusion_matrix(self.expected, self.predicted)
 			print (self.results)
-			#_______________________________________
-			#~ print ("matriz de confusion arriba")
-			#~ print (self.results[0][0])
-			#~ y_true = self.expected #falsos positivos [0][1] actual
-			#~ y_probas = self.predicted #true positivos [1][1] prediction
 			
-			#~ false_positive_rate, true_positive_rate, thresholds = roc_curve(y_true, y_probas)
-			
-			#~ plt.title('Receiver Operating Characteristic')
-			#~ plt.plot(false_positive_rate, true_positive_rate, 'b', label = "P")
-			#~ plt.show()
-			#_______________________________________
 			fig, ax = plt.subplots()
 					
 			self.filas = len(self.results)
