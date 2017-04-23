@@ -94,10 +94,22 @@ class Handler:
 		list_model_K.append([15])
 		list_model_K.append([20])
 		combo_USB_List = builder.get_object("combo_kFolds")
+		
+		list_K = builder.get_object("liststoreK")
+		for i in range(1, 23):
+			list_K.append([i])
+		combo_k_KNN_List = builder.get_object("combo_k-KNN")	
+		
+		combo_K_Folds_KNN_List = builder.get_object("combo_kFoldsKNN")
+			
 		combo_USB_List.set_active(1)
+		combo_K_Folds_KNN_List.set_active(1)
+		combo_k_KNN_List.set_active(0)
+		
 		
 		self.k_value = 5
-		
+		self.knn_value = 1
+	
 	def combo_kFolds_changed_cb(self, combo) :
 		tree_iter = combo.get_active_iter()
 		if tree_iter != None :
@@ -115,8 +127,6 @@ class Handler:
 		for line in open(self.file_txt) :
 			string_txt = string_txt + line
 			
-		#~ Mostrar texto de archivo en ventana	-----------------------
-		#~ texto_buffer.set_text(string_txt)
 		
 	def file_bayes_activate_cb(self, widget) :
 		textViewAUC = builder.get_object("textViewAUC")
@@ -147,7 +157,6 @@ class Handler:
 			my_dialog = Dialog()
 			response = my_dialog.run()
 		
-	
 	
 	def file_matriz_activate_cb(self, widget) :	
 		
@@ -271,6 +280,57 @@ class Handler:
 	def file_help_activate_cb(self, widget) :
 		dialog_about = Dialog_about()
 		response = dialog_about.run()
+
+	#~ KNN__________	
+	def combo_kFoldsKNN_changed_cb(self, combo)	:
+		tree_iter = combo.get_active_iter()
+		if tree_iter != None :
+			model = combo.get_model()
+			self.k_value = model[tree_iter][0]
+			print (self.k_value)
+			
+	
+	def combo_k_KNN_changed_cb(self, combo)	:
+		tree_iter = combo.get_active_iter()
+		if tree_iter != None :
+			model = combo.get_model()
+			self.knn_value = model[tree_iter][0]
+			print (self.knn_value)
+
+	
+	def file_KNN_activate_cb(self, widget) :
+		textViewAUC = builder.get_object("textViewAUCknn")
+		textViewAccurrancy = builder.get_object("textViewAccurracyknn")
+		textViewPrecision = builder.get_object("label_precisionknn")
+		textViewRecall = builder.get_object("label_recallknn")
+		
+		try:
+			#~ Orange _____
+			self.data = Orange.data.Table(self.file_txt)
+			nb = Orange.classification.knn.KNNLearner(n_neighbors = self.knn_value)
+			self.res = Orange.evaluation.CrossValidation(self.data, [nb], k=self.k_value)
+			accurracy = Orange.evaluation.scoring.CA(self.res)
+			auc = Orange.evaluation.scoring.AUC(self.res)
+			precision = Orange.evaluation.scoring.Precision(self.res)
+			self.recall = Orange.evaluation.scoring.Recall(self.res)
+		
+			print (accurracy[0])
+			print (auc[0])
+			print (self.recall[0])
+			textViewAUC.set_text(str(auc))
+			textViewAccurrancy.set_text(str(accurracy))
+			textViewPrecision.set_text(str(precision))
+			textViewRecall.set_text(str(self.recall))
+		
+		except AttributeError:
+			print ("Choose a File First")	
+			my_dialog = Dialog()
+			response = my_dialog.run()
+		
+		
+		
+		
+	#~ KNN FIN
 
 	def onDeleteWindow(self, *args):
 		Gtk.main_quit(*args)
